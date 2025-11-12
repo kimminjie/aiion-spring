@@ -1,0 +1,12 @@
+rootProject.name = 'spring-server'
+
+include(
+        'server:DiscoveryClient',
+        'server:configServer',
+        'server:eurekaServer',
+        'server:secretsServer',
+        'service:cultureService',
+        'service:microService',
+        'service:soccerService',
+        'service:userService'
+)
