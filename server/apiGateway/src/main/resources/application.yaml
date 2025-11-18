@@ -6,48 +6,7 @@ spring:
       enabled: false
     gateway:
       routes:
-        # Soccer Service Specific Routes (more explicit - must come first for priority)
-        - id: soccer-service-players
-          uri: lb://SOCCERSERVICE
-          predicates:
-            - Path=/api/soccer/players
-            - Path=/api/soccer/players/**
-          filters:
-            - StripPrefix=2
-        
-        - id: soccer-service-team
-          uri: lb://SOCCERSERVICE
-          predicates:
-            - Path=/api/soccer/team
-            - Path=/api/soccer/team/**
-          filters:
-            - StripPrefix=2
-        
-        - id: soccer-service-stadiums
-          uri: lb://SOCCERSERVICE
-          predicates:
-            - Path=/api/soccer/stadiums
-            - Path=/api/soccer/stadiums/**
-          filters:
-            - StripPrefix=2
-        
-        - id: soccer-service-schedules
-          uri: lb://SOCCERSERVICE
-          predicates:
-            - Path=/api/soccer/schedules
-            - Path=/api/soccer/schedules/**
-          filters:
-            - StripPrefix=2
-        
-        - id: soccer-service-search
-          uri: lb://SOCCERSERVICE
-          predicates:
-            - Path=/api/soccer/search
-            - Path=/api/soccer/search/**
-          filters:
-            - StripPrefix=2
-        
-        # Soccer Service Routes - General Route (must come last)
+        # Soccer Service Routes
         - id: soccer-service
           uri: lb://SOCCERSERVICE
           predicates:
