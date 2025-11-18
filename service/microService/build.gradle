@@ -20,12 +20,28 @@ configurations {
 	}
 }
 
+ext {
+	set('springCloudVersion', "2024.0.0-M2")
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+
+bootJar.enabled = true
+jar.enabled = false
+
 repositories {
 	mavenCentral()
+	maven {
+		url = uri("https://repo.spring.io/milestone")
+	}
 }
 
 dependencies {
-	implementation group: 'http://org.springframework.cloud', name: 'spring-cloud-starter-netflix-eureka-client'
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'

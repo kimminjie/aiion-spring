@@ -1,0 +1,48 @@
+# Build directories
+**/build/
+build/
+.gradle/
+**/.gradle/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.DS_Store
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Documentation
+*.md
+HELP.md
+
+# Test files
+**/test/
+test/
+
+# Source files (only need build artifacts, but we'll copy sources for Gradle build)
+# Actually, we need source files for Gradle build, so we won't ignore them
+
+# Temporary files
+*.log
+*.tmp
+*.bak
+*.swp
+*~
+
+# Node modules if any
+node_modules/
+
+# Gradle wrapper (we'll copy it in Dockerfile)
+# gradlew
+# gradlew.bat
+

@@ -4,6 +4,7 @@ include(
         'server:DiscoveryClient',
         'server:configServer',
         'server:eurekaServer',
+        'server:apiGateway',
         'server:secretsServer',
         'service:cultureService',
         'service:microService',
