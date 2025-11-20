@@ -1,0 +1,174 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_DB: aidb
+      POSTGRES_USER: aiion
+      POSTGRES_PASSWORD: aiion4man
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - spring-network
+
+  eureka:
+    build:
+      context: .
+      dockerfile: ./server/eureka/Dockerfile
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - spring-network
+
+
+  config:
+    build:
+      context: .
+      dockerfile: ./server/config/Dockerfile
+    container_name: config-server
+    ports:
+      - "8888:8888"
+    depends_on:
+      - eureka
+    networks:
+      - spring-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=native
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka/
+
+  discovery:
+    build:
+      context: .
+      dockerfile: ./server/discovery/Dockerfile
+    container_name: discovery-server
+    ports:
+      - "8080:8080"
+    depends_on:
+      - eureka
+    networks:
+      - spring-network
+    environment:
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka/
+      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_CLOUD_GATEWAY=DEBUG
+      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_CLOUD_LOADBALANCER=DEBUG
+      - LOGGING_LEVEL_REACTOR_NETTY=DEBUG
+
+  common-service:
+    build:
+      context: .
+      dockerfile: ./service/common-service/Dockerfile
+    container_name: common-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+      - eureka
+    networks:
+      - spring-network
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/aidb
+      - SPRING_DATASOURCE_USERNAME=aiion
+      - SPRING_DATASOURCE_PASSWORD=aiion4man
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka/
+
+  user-service:
+    build:
+      context: .
+      dockerfile: ./service/user-service/Dockerfile
+    container_name: user-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - postgres
+      - eureka
+    networks:
+      - spring-network
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/aidb
+      - SPRING_DATASOURCE_USERNAME=aiion
+      - SPRING_DATASOURCE_PASSWORD=aiion4man
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka/
+
+  diary-service:
+    build:
+      context: .
+      dockerfile: ./service/diary-service/Dockerfile
+    container_name: diary-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - postgres
+      - eureka
+    networks:
+      - spring-network
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/aidb
+      - SPRING_DATASOURCE_USERNAME=aiion
+      - SPRING_DATASOURCE_PASSWORD=aiion4man
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka/
+
+  calendar-service:
+    build:
+      context: .
+      dockerfile: ./service/calendar-service/Dockerfile
+    container_name: calendar-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      - postgres
+      - eureka
+    networks:
+      - spring-network
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/aidb
+      - SPRING_DATASOURCE_USERNAME=aiion
+      - SPRING_DATASOURCE_PASSWORD=aiion4man
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka/
+
+  soccer-service:
+    build:
+      context: .
+      dockerfile: ./service/soccer-service/Dockerfile
+    container_name: soccer-service
+    ports:
+      - "8085:8085"
+    depends_on:
+      - postgres
+      - eureka
+    networks:
+      - spring-network
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/aidb
+      - SPRING_DATASOURCE_USERNAME=aiion
+      - SPRING_DATASOURCE_PASSWORD=aiion4man
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka/
+
+  nextjs:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_GATEWAY_URL=http://discovery:8080
+      - NEXT_PUBLIC_API_BASE_URL=http://discovery:8080
+      - NEXT_PUBLIC_EUREKA_URL=http://eureka:8761
+    restart: unless-stopped
+    networks:
+      - spring-network
+    depends_on:
+      - eureka
+      - discovery
+
+volumes:
+  postgres_data:
+
+networks:
+  spring-network:
+    driver: bridge
+
